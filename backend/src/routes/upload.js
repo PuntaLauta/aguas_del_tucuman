@@ -29,13 +29,13 @@ const upload = multer({
  * POST /api/upload
  * Sube un archivo CSV y procesa los datos
  */
-router.post('/', upload.single('csvFile'), async (req, res) => {
+router.post('/', upload.single('file'), async (req, res) => {
   try {
     // Verificar que se subió un archivo
     if (!req.file) {
       return res.status(400).json({
-        success: false,
-        message: 'No se proporcionó ningún archivo CSV'
+        ok: false,
+        error: 'No se proporcionó ningún archivo CSV'
       });
     }
 
@@ -44,26 +44,19 @@ router.post('/', upload.single('csvFile'), async (req, res) => {
     // Procesar el archivo CSV
     const result = await importCsvData(req.file.buffer);
 
+    // Calcular total de registros insertados
+    const totalInserted = result.recordsProcessed;
+
     res.json({
-      success: true,
-      message: 'Archivo CSV procesado correctamente',
-      data: {
-        filename: req.file.originalname,
-        size: req.file.size,
-        recordsProcessed: result.recordsProcessed,
-        neighborhoodsCreated: result.neighborhoodsCreated,
-        householdsCreated: result.householdsCreated,
-        readingsCreated: result.readingsCreated,
-        errors: result.errors
-      }
+      ok: true,
+      inserted: totalInserted
     });
 
   } catch (error) {
     console.error('❌ Error al procesar archivo CSV:', error);
     
     res.status(500).json({
-      success: false,
-      message: 'Error al procesar el archivo CSV',
+      ok: false,
       error: error.message
     });
   }
