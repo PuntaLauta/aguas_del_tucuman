@@ -170,11 +170,23 @@ async function findOrCreateHousehold(record, neighborhood) {
       address: `${neighborhood.name} - Lat: ${record.lat}, Lng: ${record.lng}`,
       latitude: record.lat ? parseFloat(record.lat) : null,
       longitude: record.lng ? parseFloat(record.lng) : null,
-      isDebtor: record.moroso === 'true' || record.moroso === '1' || record.moroso === '1',
+      isDebtor: record.moroso === 'true' || record.moroso === '1' || record.moroso === true,
       totalDebt: record.amount_due ? parseFloat(record.amount_due) : 0,
       lastReadingDate: new Date()
     }
   });
+
+  // Si el hogar ya existía, actualizar los campos importantes
+  if (!wasCreated) {
+    const isDebtor = record.moroso === 'true' || record.moroso === '1' || record.moroso === true;
+    const totalDebt = record.amount_due ? parseFloat(record.amount_due) : 0;
+    
+    await household.update({
+      isDebtor: isDebtor,
+      totalDebt: totalDebt,
+      lastReadingDate: new Date()
+    });
+  }
 
   return { household, wasCreated };
 }
@@ -187,7 +199,7 @@ async function findOrCreateHousehold(record, neighborhood) {
 async function createOrUpdateReading(record, household) {
   const consumptionM3 = parseFloat(record.consumo_m3) || 0;
   const amountDue = parseFloat(record.amount_due) || 0;
-  const isDebtor = record.moroso === 'true' || record.moroso === '1' || record.moroso === '1';
+  const isDebtor = record.moroso === 'true' || record.moroso === '1' || record.moroso === true;
 
   // Buscar lectura existente para el período
   const existingReading = await Reading.findOne({

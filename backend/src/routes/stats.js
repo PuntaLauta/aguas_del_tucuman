@@ -19,34 +19,29 @@ router.get('/top-consumption', async (req, res) => {
   try {
     const { limit = 5 } = req.query;
 
+    // Consulta simplificada sin JOIN problemático
     const topNeighborhoods = await Neighborhood.findAll({
       attributes: [
         'id',
         'name',
         'totalConsumption',
-        'totalDebt',
-        [fn('COUNT', col('households.id')), 'householdCount']
+        'totalDebt'
       ],
-      include: [
-        {
-          model: Household,
-          as: 'households',
-          attributes: [],
-          required: false
-        }
-      ],
-      group: ['Neighborhood.id', 'Neighborhood.name', 'Neighborhood.totalConsumption', 'Neighborhood.totalDebt'],
       order: [['totalConsumption', 'DESC']],
       limit: parseInt(limit)
     });
 
-    res.json({
-      success: true,
-      data: {
-        topNeighborhoods,
-        limit: parseInt(limit)
-      }
-    });
+    // Formatear datos para el frontend
+    const formattedData = topNeighborhoods.map(neighborhood => ({
+      id: neighborhood.id,
+      name: neighborhood.name,
+      barrio: neighborhood.name, // Para compatibilidad con frontend
+      total_m3: neighborhood.totalConsumption,
+      total: neighborhood.totalConsumption, // Para compatibilidad con frontend
+      totalDebt: neighborhood.totalDebt
+    }));
+
+    res.json(formattedData);
 
   } catch (error) {
     console.error('❌ Error al obtener top barrios por consumo:', error);

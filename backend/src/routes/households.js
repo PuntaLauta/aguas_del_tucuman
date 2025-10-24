@@ -4,7 +4,7 @@
  */
 
 import express from 'express';
-import { Household, Neighborhood } from '../models/index.js';
+import { Household, Neighborhood, Reading } from '../models/index.js';
 import { Op } from 'sequelize';
 
 const router = express.Router();
@@ -38,11 +38,11 @@ router.get('/', async (req, res) => {
     const neighborhoodWhere = {};
     if (neighborhood) {
       neighborhoodWhere.name = {
-        [Op.iLike]: `%${neighborhood}%`
+        [Op.eq]: neighborhood
       };
     }
 
-    // Consultar casas con sus barrios
+    // Consultar casas con sus barrios y lecturas
     const households = await Household.findAndCountAll({
       where: whereClause,
       include: [
@@ -51,6 +51,13 @@ router.get('/', async (req, res) => {
           as: 'neighborhood',
           where: Object.keys(neighborhoodWhere).length > 0 ? neighborhoodWhere : undefined,
           attributes: ['id', 'name', 'latitude', 'longitude']
+        },
+        {
+          model: Reading,
+          as: 'readings',
+          attributes: ['id', 'period', 'consumptionM3', 'amountDue', 'isPaid', 'readingDate'],
+          order: [['readingDate', 'DESC']],
+          limit: 1 // Solo la lectura más reciente
         }
       ],
       attributes: [
