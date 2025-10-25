@@ -6,7 +6,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { testConnection, syncDatabase } from './db.js';
+import { testConnection, syncDatabase, clearDatabase } from './db.js';
 import './models/index.js'; // Importar modelos para establecer relaciones
 
 // Importar rutas
@@ -104,6 +104,13 @@ async function startServer() {
     const dbConnected = await testConnection();
     if (!dbConnected) {
       console.error('❌ No se pudo conectar a la base de datos');
+      process.exit(1);
+    }
+
+    // Limpiar base de datos al iniciar
+    const dbCleared = await clearDatabase();
+    if (!dbCleared) {
+      console.error('❌ No se pudo limpiar la base de datos');
       process.exit(1);
     }
 

@@ -50,4 +50,30 @@ export const syncDatabase = async () => {
   }
 };
 
+// Función para limpiar la base de datos
+export const clearDatabase = async () => {
+  try {
+    console.log('🧹 Limpiando base de datos...');
+    
+    // Importar modelos para acceder a las tablas
+    const { Household, Neighborhood, Reading } = await import('./models/index.js');
+    
+    // Limpiar en orden correcto (respetando foreign keys)
+    await Reading.destroy({ where: {}, force: true });
+    console.log('   ✅ Tabla readings limpiada');
+    
+    await Household.destroy({ where: {}, force: true });
+    console.log('   ✅ Tabla households limpiada');
+    
+    await Neighborhood.destroy({ where: {}, force: true });
+    console.log('   ✅ Tabla neighborhoods limpiada');
+    
+    console.log('✅ Base de datos limpiada correctamente');
+    return true;
+  } catch (error) {
+    console.error('❌ Error al limpiar la base de datos:', error.message);
+    return false;
+  }
+};
+
 export default sequelize;

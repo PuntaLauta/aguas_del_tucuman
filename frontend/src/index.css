@@ -146,6 +146,19 @@ th, td {
   margin: 8px 0;
 }
 
+/* Custom marker styles */
+.custom-green-marker {
+  filter: hue-rotate(120deg) saturate(1.5);
+}
+
+.custom-red-marker {
+  filter: hue-rotate(0deg) saturate(1.5);
+}
+
+.custom-blue-marker {
+  filter: hue-rotate(240deg) saturate(1.5);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .container {

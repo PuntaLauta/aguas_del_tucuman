@@ -1,79 +1,64 @@
+import { Card, Form, Row, Col, Button } from "react-bootstrap";
+
 export default function Filters({ neighborhoods = [], value = {}, onChange }) {
   const { neighborhood = "", debtor = null } = value;
-  
+
   // Asegurar que neighborhoods sea un array
   const safeNeighborhoods = Array.isArray(neighborhoods) ? neighborhoods : [];
-  
+
   return (
-    <div style={{
-      border: "1px solid #e0e0e0",
-      borderRadius: "8px",
-      padding: "20px",
-      backgroundColor: "#fafafa"
-    }}>
-      <h3 style={{ margin: "0 0 16px 0", color: "#374151" }}>🔍 Filtros</h3>
-      <div style={{ display: "flex", gap: "20px", alignItems: "center", flexWrap: "wrap" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-          <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}>
-            Barrio:
-          </label>
-          <select 
-            value={neighborhood} 
-            onChange={e => onChange?.({ ...value, neighborhood: e.target.value || undefined })}
-            style={{
-              padding: "8px 12px",
-              border: "1px solid #d1d5db",
-              borderRadius: "4px",
-              backgroundColor: "white",
-              minWidth: "200px"
-            }}
-          >
-            <option value="">Todos los barrios</option>
-            {safeNeighborhoods.map((n, index) => (
-              <option key={n?.name || n || index} value={n?.name || n || ""}>
-                {n?.name || n || "Sin nombre"}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <input
-            type="checkbox"
-            id="debtor-filter"
-            checked={debtor === true}
-            onChange={e => onChange?.({ ...value, debtor: e.target.checked ? true : null })}
-            style={{ transform: "scale(1.2)" }}
-          />
-          <label 
-            htmlFor="debtor-filter" 
-            style={{ 
-              fontSize: "14px", 
-              fontWeight: "500", 
-              color: "#374151",
-              cursor: "pointer"
-            }}
-          >
-            🚨 Solo morosos
-          </label>
-        </div>
-        
-        <button
-          onClick={() => onChange?.({ neighborhood: "", debtor: null })}
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#6b7280",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "500",
-            fontSize: "14px"
-          }}
-        >
-          🗑️ Limpiar filtros
-        </button>
-      </div>
-    </div>
+    <Card className="shadow-sm">
+      <Card.Header className="bg-light">
+        <h5 className="mb-0">🔍 Filtros de Búsqueda</h5>
+      </Card.Header>
+      <Card.Body>
+        <Row className="g-3">
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Barrio:</Form.Label>
+              <Form.Select
+                value={neighborhood}
+                onChange={e => onChange?.({ ...value, neighborhood: e.target.value || undefined })}
+              >
+                <option value="">Todos los barrios</option>
+                {safeNeighborhoods.map((n, index) => (
+                  <option key={n?.name || n || index} value={n?.name || n || ""}>
+                    {n?.name || n || "Sin nombre"}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Estado:</Form.Label>
+              <div className="d-flex align-items-center">
+                <Form.Check
+                  type="checkbox"
+                  id="debtor-filter"
+                  checked={debtor === true}
+                  onChange={e => onChange?.({ ...value, debtor: e.target.checked ? true : null })}
+                  className="me-2"
+                />
+                <Form.Label htmlFor="debtor-filter" className="mb-0">
+                  🚨 Solo morosos
+                </Form.Label>
+              </div>
+            </Form.Group>
+          </Col>
+
+          <Col md={2} className="d-flex align-items-end">
+            <Button
+              variant="outline-secondary"
+              onClick={() => onChange?.({ neighborhood: "", debtor: null })}
+              className="w-100"
+            >
+              🗑️ Limpiar
+            </Button>
+          </Col>
+        </Row>
+      </Card.Body>
+    </Card>
   );
 }

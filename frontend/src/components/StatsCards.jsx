@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Card, Row, Col, Spinner, Alert } from "react-bootstrap";
 import { topConsumption } from "../api/households";
 
 export default function StatsCards() {
@@ -9,7 +10,7 @@ export default function StatsCards() {
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true); 
+        setLoading(true);
         setError("");
         const data = await topConsumption(5);
         // Asegurar que sea un array y tenga la estructura correcta
@@ -19,114 +20,74 @@ export default function StatsCards() {
         console.error('Error en StatsCards:', e);
         setError("No se pudo cargar el top de consumo");
         setItems([]); // Establecer array vacío en caso de error
-      } finally { 
-        setLoading(false); 
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
 
-  if (loading) return (
-    <div style={{
-      border: "1px solid #e0e0e0",
-      borderRadius: "8px",
-      padding: "20px",
-      backgroundColor: "#fafafa",
-      textAlign: "center"
-    }}>
-      <div style={{ color: "#6b7280" }}>⏳ Cargando estadísticas...</div>
-    </div>
-  );
-  
-  if (error) return (
-    <div style={{
-      border: "1px solid #fecaca",
-      borderRadius: "8px",
-      padding: "20px",
-      backgroundColor: "#fef2f2",
-      color: "#dc2626"
-    }}>
-      ❌ {error}
-    </div>
-  );
+  if (loading) {
+    return (
+      <Card className="shadow-sm">
+        <Card.Body className="text-center py-5">
+          <Spinner animation="border" variant="primary" className="me-2" />
+          <span>Cargando estadísticas...</span>
+        </Card.Body>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="danger" className="shadow-sm">
+        <Alert.Heading>❌ Error</Alert.Heading>
+        {error}
+      </Alert>
+    );
+  }
 
   return (
-    <div style={{
-      border: "1px solid #e0e0e0",
-      borderRadius: "8px",
-      padding: "20px",
-      backgroundColor: "#fafafa"
-    }}>
-      <h3 style={{ margin: "0 0 16px 0", color: "#374151" }}>📊 Top 5 Consumo por Barrio</h3>
-      <div style={{ 
-        display: "grid", 
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", 
-        gap: "16px" 
-      }}>
-        {items.map((x, i) => (
-          <div 
-            key={i} 
-            style={{
-              border: "1px solid #e0e0e0",
-              borderRadius: "8px",
-              padding: "16px",
-              backgroundColor: "white",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-              transition: "transform 0.2s"
-            }}
-          >
-            <div style={{ 
-              display: "flex", 
-              alignItems: "center", 
-              gap: "8px",
-              marginBottom: "8px"
-            }}>
-              <span style={{ 
-                fontSize: "20px",
-                backgroundColor: "#dbeafe",
-                borderRadius: "50%",
-                width: "32px",
-                height: "32px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}>
-                #{i + 1}
-              </span>
-              <div>
-                <div style={{ fontSize: "12px", color: "#6b7280", fontWeight: "500" }}>
-                  BARRIO
-                </div>
-                <div style={{ fontWeight: "700", color: "#1f2937" }}>
-                  {x.barrio || x.name || "-"}
-                </div>
+    <Card className="shadow-sm">
+      <Card.Header className="bg-info text-white">
+        <h5 className="mb-0">📊 Top 5 Consumo por Barrio</h5>
+      </Card.Header>
+      <Card.Body>
+        <Row className="g-3">
+          {items.map((x, i) => (
+            <Col key={i} md={6} lg={4} xl={2}>
+              <Card className="h-100 border-0 bg-light">
+                <Card.Body className="text-center">
+                  <div className="mb-3">
+                    <span className="badge bg-primary rounded-circle fs-5" style={{ width: "40px", height: "40px", lineHeight: "40px" }}>
+                      #{i + 1}
+                    </span>
+                  </div>
+                  
+                  <h6 className="text-muted mb-1">BARRIO</h6>
+                  <h5 className="fw-bold text-dark mb-3">
+                    {x.barrio || x.name || "-"}
+                  </h5>
+                  
+                  <div>
+                    <small className="text-muted">CONSUMO TOTAL (m³)</small>
+                    <h4 className="fw-bold text-primary mb-0">
+                      {x.total_m3 ?? x.total ?? "-"}
+                    </h4>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+          
+          {items.length === 0 && (
+            <Col xs={12}>
+              <div className="text-center py-4 text-muted">
+                📊 No hay datos de consumo disponibles
               </div>
-            </div>
-            <div style={{ marginTop: "12px" }}>
-              <div style={{ fontSize: "12px", color: "#6b7280", fontWeight: "500" }}>
-                CONSUMO TOTAL (m³)
-              </div>
-              <div style={{ 
-                fontSize: "24px", 
-                fontWeight: "700", 
-                color: "#2563eb",
-                marginTop: "4px"
-              }}>
-                {x.total_m3 ?? x.total ?? "-"}
-              </div>
-            </div>
-          </div>
-        ))}
-        {items.length === 0 && (
-          <div style={{ 
-            gridColumn: "1 / -1", 
-            textAlign: "center", 
-            color: "#6b7280",
-            padding: "20px"
-          }}>
-            📊 No hay datos de consumo disponibles
-          </div>
-        )}
-      </div>
-    </div>
+            </Col>
+          )}
+        </Row>
+      </Card.Body>
+    </Card>
   );
 }

@@ -3,7 +3,6 @@ import api from "./client";
 export async function listNeighborhoods() {
   try {
     const { data } = await api.get("/neighborhoods");
-    console.log('Respuesta del backend para neighborhoods:', data);
     
     // Manejar la estructura del backend: { success: true, data: { neighborhoods: [...] } }
     if (data && data.success && data.data && data.data.neighborhoods) {
@@ -40,7 +39,6 @@ export async function listHouseholds({ neighborhood, debtor, page=1, pageSize=10
   
   try {
     const { data } = await api.get("/households", { params });
-    console.log('Respuesta del backend para households:', data);
     
     // Manejar la estructura del backend: { success: true, data: { households: [...], total: ... } }
     if (data && data.success && data.data) {
