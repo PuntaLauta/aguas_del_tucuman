@@ -257,39 +257,5 @@ El sistema acepta archivos CSV con las siguientes columnas:
 
 ## 🌐 Deployment
 
-### Vercel (Recomendado)
-1. Conectar repositorio a Vercel
-2. Configurar variables de entorno
-3. Deploy automático en cada push
-
-### Variables de Producción
-```env
-DATABASE_URL=postgresql://usuario:password@host:5432/database
-NODE_ENV=production
-CORS_ORIGIN=https://tu-dominio.com
-```
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crear rama feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit cambios (`git commit -m 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abrir Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 👥 Autores
-
-- **Aguas del Tucumán** - Desarrollo y mantenimiento
-
-## 📞 Soporte
-
-Para soporte técnico o consultas sobre el proyecto, contactar a través de los issues del repositorio.
-
----
-
-**💧 Aguas del Tucumán** - Sistema de Gestión de Agua Potable
+El proyecto utiliza **Vercel** para el deployment automático. Al conectar el repositorio a Vercel, se realiza el deploy automático en cada push a la rama principal.
 
